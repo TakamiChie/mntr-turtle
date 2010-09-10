@@ -1,0 +1,13 @@
+body, textarea {
+	font-family: "Lucida Console", "Courier New", monospace;
+	font-size: 14px;
+}
+#canvas {
+	border: 1px solid gray;
+}
+#comref th {
+	text-align: right;
+}
+#comref td {
+	letter-spacing: 1px;
+}
