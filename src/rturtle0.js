@@ -22,6 +22,7 @@ function init() {
 		turtle.interval = this.value;
 	};
 	startButton.onclick = function() {
+		turtle.interval = this.value;
 		turtle.run(source.value);
 	};
 	imagenizeButton.onclick = function() {
@@ -59,20 +60,27 @@ function init() {
 	// sample draws
     var _ = "  ";
 	var draws = {
-		"Square":
+		"四角":
 			"Center\n"+
 			"Repeat 4 [\n"+
 			_+"Forward 100\n"+
 			_+"Turn 90\n"+
 			"]",
-		"Star":
+		"星":
 			"Center\n"+
 			"Turn 90\n"+
 			"Repeat 5 [\n"+
 			_+"Forward 100\n"+
 			_+"Turn 144\n"+
 			"]",
-		"6-Circle Flower":
+		"円":
+			"Center\n"+
+			"Turn 60\n"+
+			_+"Repeat 360 [\n"+
+			_+"Forward 1\n"+
+			_+"Turn 1\n"+
+			"]",
+		"花":
 			"Center\n"+
 			"Repeat 6 [\n"+
 			_+"Turn 60\n"+
@@ -131,7 +139,18 @@ TokenArray.prototype = (function() {
         var list = code.split(/\r?\n\r?/);
         while (list.length) {
             var line = list.shift();
-            if (line != "") this.push(line);
+            if (line != ""){
+              // Forwardコマンドに限り、数ピクセル刻みで分割
+              if(line.toLowerCase().indexOf("forward") != -1){
+                  var nums = line.trim().split(" ")[1];
+                  for(var i = 0; i < nums; i++)
+                  {
+                      this.push("Forward 1");
+	              }
+              }else{
+	              this.push(line);
+	          }
+            }
         }
         this.first();
     };
@@ -250,7 +269,12 @@ Interpreter.prototype = (function() {
 			var key = token.shift();
 			that.dispatch(key, token);
 			
-			setTimeout(arguments.callee, that.interval);
+			if(that.interval == 0)
+			{
+				arguments.callee();
+			}else{
+				setTimeout(arguments.callee, that.interval);
+			}
 		})();
 	};
 	

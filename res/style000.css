@@ -11,3 +11,21 @@ body, textarea {
 #comref td {
 	letter-spacing: 1px;
 }
+#console{
+  width: 40em;
+  float: left;
+}
+
+#comref{
+  width: 20em;
+  float: left;
+}
+
+#canvasarea{
+  clear: both;
+  width: 100%;
+}
+
+#canvas{
+  margin: 0 1em;
+}

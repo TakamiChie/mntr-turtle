@@ -10,40 +10,35 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 </head>
 	<body>
-		<h1>The TURTLE interpreter (Real-time ver.)</h1>
-		<p>Now, IE supported!</p>
-		<table>
-			<tr>
-				<td valign="top">
-					<h2>Reference:</h2>
-					<table id="comref">
-						<tr><th>SetCanvasSize</th><td><i>width height</i></td></tr>
-						<tr><th>MoveTo</th><td><i>x y</i></td></tr>
-						<tr><th>Center</th><td></td></tr>
-						<tr><th>Forward</th><td><i>duration</i></td></tr>
-						<tr><th>Turn</th><td><i>degree</i></td></tr>
-						<!--<tr><th>Set</th><td><i>name value</td></tr>-->
-						<tr><th>Repeat</th><td><i>num</i> [block]</td></tr>
-					</table>
-				</td>
-				<td valign="top">
-					<form action="" id="console">
-						<h2>Source:</h2>
-						<select name="samples" tabindex="3">
-							<option>example:</option>
-						</select><br>
-						<textarea name="source" rows="15" cols="40" tabindex="4"></textarea><br>
-						<input type="button" name="start" value="start" tabindex="1">
-						<input type="button" name="imagenize" value="download image/png" tabindex="2"><br>
-						Drawing interval: <input type="text" name="interval" value="10">ms
-						
-					</form>
-				</td>
-				<td valign="top">
-					<h2>Canvas:</h2>
-					<canvas id="canvas" width="350" height="350"></canvas>
-				</td>
-			</tr>
+		<h1>The TURTLE interpreter</h1>
+		<h2>命令一覧:</h2>
+		<table id="comref" summary="コマンドリファレンス)">
+			<tr><th>SetCanvasSize</th><td><i>width height</i></td></tr>
+			<tr><th>MoveTo</th><td><i>x y</i></td></tr>
+			<tr><th>Center</th><td></td></tr>
+			<tr><th>Forward</th><td><i>duration</i></td></tr>
+			<tr><th>Turn</th><td><i>degree</i></td></tr>
+			<!--<tr><th>Set</th><td><i>name value</td></tr>-->
+			<tr><th>Repeat</th><td><i>num</i> [block]</td></tr>
 		</table>
+		<form action="" id="console">
+			<h2>ソースコード:</h2>
+			<select name="samples" tabindex="3">
+				<option>例:</option>
+			</select><br>
+			<textarea name="source" rows="15" cols="40" tabindex="4"></textarea><br>
+			<input type="button" name="start" value="実行" tabindex="1">
+			<input type="button" name="imagenize" value="画像をダウンロード" tabindex="2"><br>
+			アニメーション速度 <select name="interval">
+				<option value="0">アニメーションしない</option>
+				<option value="1">はやい</option>
+				<option value="10" selected>ふつう</option>
+				<option value="30">ゆっくり</option>
+			</select>
+		</form>
+		<div id="canvasarea">
+			<h2>キャンバス:</h2>
+			<canvas id="canvas" width="350" height="350"></canvas>
+		</div>
 	</body>
 </html>
