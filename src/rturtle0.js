@@ -22,7 +22,7 @@ function init() {
 		turtle.interval = this.value;
 	};
 	startButton.onclick = function() {
-		turtle.interval = this.value;
+		turtle.interval = intervalNum.value;
 		turtle.run(source.value);
 	};
 	imagenizeButton.onclick = function() {
@@ -276,6 +276,7 @@ Interpreter.prototype = (function() {
 				setTimeout(arguments.callee, that.interval);
 			}
 		})();
+		alert("finish!");
 	};
 	
 	return proto;
