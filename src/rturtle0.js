@@ -24,7 +24,6 @@ function init() {
 	startButton.onclick = function() {
 		turtle.interval = intervalNum.value;
 		turtle.run(source.value);
-		alert("finish");
 	};
 	imagenizeButton.onclick = function() {
 		try {
