@@ -30,7 +30,7 @@ function init() {
 			var url = canvas.toDataURL("image/png");
 			window.open(url, null);
 		} catch (e) {
-			alert("image exporting is not supported in your browser");
+			alert("このブラウザでは画像のエクスポートができません。");
 		}
 	};	
 
