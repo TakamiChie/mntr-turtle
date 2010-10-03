@@ -276,7 +276,6 @@ Interpreter.prototype = (function() {
 				setTimeout(arguments.callee, that.interval);
 			}
 		})();
-		alert("finish!");
 	};
 	
 	return proto;
