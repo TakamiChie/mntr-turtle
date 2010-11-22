@@ -18,13 +18,22 @@ function init() {
 	var _ = "  ";
 	
 	var turtle = new Turtle(canvas);
-
-
+	
+	turtle.on("start", function() {
+		startButton.disabled = true;
+		startButton.value = "描画中...";
+	});
+	
+	turtle.on("end", function() {
+		startButton.disabled = false;
+		startButton.value = "実行";
+	});
+	
 	intervalNum.onchange = function() {
-		turtle.interval = this.value;
+		turtle.skipRadius = Math.pow(10e3, Number(this.value));
 	};
 	startButton.onclick = function() {
-		turtle.interval = intervalNum.value;
+		turtle.skipRadius = Math.pow(10e3, Number(intervalNum.value));
 		turtle.run(source.value);
 	};
 	imagenizeButton.onclick = function() {
@@ -267,7 +276,7 @@ Interpreter.prototype = (function() {
 			
 			do {
 				token = that._tokenList.next();
-				if (!token) return;
+				if (!token) return that.dispatch("end");
 				
 				key = token.shift();
 				that.dispatch(key, token);
@@ -297,7 +306,9 @@ function Turtle(element) {
 	this.x = 0;
 	this.y = 0;
 	this.degree = 0;
-
+	this.skipRadius = 1;
+	
+	this._duration = 0;
 	this._varStore = {};
 
 		
@@ -320,11 +331,19 @@ function Turtle(element) {
 	
 	this.on("forward", function(duration) {
 		
+		// あまりに描画が遅いので高速化
+		if (that.duration < that.skipRadius) {
+			that.duration += duration;
+			that.interval = 0;
+		} else {
+			that.interval = 1;
+			that.duration = 0;
+		}
+		
 		var rotated = Vector2D.rotate(
 			0, duration, Vector2D.degreeToRadian(that.degree+180)
 		);
 		var rx = Number(that.x+rotated.x), ry = Number(that.y+rotated.y);
-
 		
 		ctx.beginPath();
 		ctx.moveTo(that.x, that.y);
@@ -356,6 +375,10 @@ function Turtle(element) {
 		var dim = that.getCanvasSize();
 		ctx.clearRect(0, 0, dim.width, dim.height);
 	});
+	
+	this.on("end", function() {
+		that.end();
+	});
 }
 Turtle.prototype = (function() {
 	var proto = new Interpreter;
@@ -365,14 +388,15 @@ Turtle.prototype = (function() {
 	proto.run = function(code) {
 		this.clear();
 		this.degree = 0;
+		this.dispatch("start");
 		this.dispatch("moveto", [0, 0]);
 		
 		_proto_run.call(this, code);
 	};
 
 	proto.clear = function() {
-		this.end();
 		this.dispatch("clear");
+		this.dispatch("end");
 		this.off("]")
 	};
 
