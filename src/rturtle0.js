@@ -15,6 +15,8 @@ function init() {
 	var imagenizeButton = console.imagenize;
 	var samples = console.samples;
 
+	var _ = "  ";
+	
 	var turtle = new Turtle(canvas);
 
 
@@ -43,8 +45,8 @@ function init() {
 			var before = source.value.slice(0, startPos);
 			var after = source.value.slice(endPos);
 
-			source.value = before + SP + after;
-			source.setSelectionRange(endPos+SP.length, endPos+SP.length);
+			source.value = before + _ + after;
+			source.setSelectionRange(endPos+_.length, endPos+_.length);
 			return false;
 		}
 	};
@@ -58,7 +60,6 @@ function init() {
 	};
 
 	// sample draws
-	var _ = "  ";
 	var draws = {
 		"四角":
 			"Center\n"+
