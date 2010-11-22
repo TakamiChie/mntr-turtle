@@ -9,15 +9,17 @@ function println(str) {
 function init() {
 	var canvas = document.getElementById("canvas");
 	var console = document.getElementById("console");
+	var pointer = canvas.lastChild;
 	var source = console.source;
 	var intervalNum = console.interval;
 	var startButton = console.start;
 	var imagenizeButton = console.imagenize;
 	var samples = console.samples;
-
-	var _ = "  ";
 	
-	var turtle = new Turtle(canvas);
+	var _ = "  ";
+	var turtle = new Turtle(canvas.firstChild);
+
+	startButton.disabled = false;
 	
 	turtle.on("start", function() {
 		startButton.disabled = true;
@@ -28,7 +30,12 @@ function init() {
 		startButton.disabled = false;
 		startButton.value = "実行";
 	});
-	
+
+	turtle.on("point", function(x,y) {
+		pointer.style.left = (x-1) + "px";
+		pointer.style.top = (y-1) + "px";
+	});
+
 	intervalNum.onchange = function() {
 		turtle.skipRadius = Math.pow(10e3, Number(this.value));
 	};
@@ -113,8 +120,7 @@ function init() {
 		
 		source.value = samples.options[index].getAttribute("value");
 	}
-	
-	
+
 }
 
 var Vector2D = {
@@ -351,6 +357,7 @@ function Turtle(element) {
 		ctx.stroke();
 
 		that.dispatch("moveto", [rx, ry]);
+		that.dispatch("point", [rx, ry]);
 	});
 
 	this.on("moveto", function(x, y) {

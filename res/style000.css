@@ -3,8 +3,19 @@ body, textarea {
 	font-size: 14px;
 }
 #canvas {
+	position: relative;
+	margin: 0 1em;
+}
+#canvas canvas{
 	border: 1px solid gray;
 }
+#canvas .pointer {
+	position: absolute;
+	left: 0; top: 0;
+	width: 4px; height: 4px;
+	background-color: #ff6600;
+}
+
 #comref th {
 	text-align: right;
 }
@@ -12,20 +23,17 @@ body, textarea {
 	letter-spacing: 1px;
 }
 #console{
-  width: 40em;
-  float: left;
+	width: 40em;
+	float: left;
 }
 
 #comref{
-  width: 20em;
-  float: left;
+	width: 20em;
+	float: left;
 }
 
 #canvasarea{
-  clear: both;
-  width: 100%;
+	clear: both;
+	width: 100%;
 }
 
-#canvas{
-  margin: 0 1em;
-}
