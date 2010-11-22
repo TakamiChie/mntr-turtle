@@ -58,7 +58,7 @@ function init() {
 	};
 
 	// sample draws
-    var _ = "  ";
+	var _ = "  ";
 	var draws = {
 		"四角":
 			"Center\n"+
@@ -104,7 +104,7 @@ function init() {
 		source.value = samples.options[index].getAttribute("value");
 	}
 	
-    
+	
 }
 
 var Vector2D = {
@@ -123,73 +123,72 @@ var Vector2D = {
 
 function TokenArray() {
 	// inherit
-    Array.apply(this);
+	Array.apply(this);
 
-    // properties
-    this.current = -1;
-    
-    // construtor
-    this.initialize.apply(this, arguments);
+	// properties
+	this.current = -1;
+	
+	// construtor
+	this.initialize.apply(this, arguments);
 }
 TokenArray.prototype = (function() {
-    var proto = new Array;
+	var proto = new Array;
 
-    // constructor
-    proto.initialize = function(code) {
-        var list = code.split(/\r?\n\r?/);
-        while (list.length) {
-            var line = list.shift();
-            if (line != ""){
-              // Forwardコマンドに限り、数ピクセル刻みで分割
-              if(line.toLowerCase().indexOf("forward") != -1){
-                  var nums = line.trim().split(" ")[1];
-                  for(var i = 0; i < nums; i++)
-                  {
-                      this.push("Forward 1");
-	              }
-              }else{
-	              this.push(line);
-	          }
-            }
-        }
-        this.first();
-    };
-    
-    // public
-    proto.first = function() {
-    	this.current = -1;
-    };
-    
-    proto.next = function() {
+	// constructor
+	proto.initialize = function(code) {
+		var list = code.split(/\r?\n\r?/);
+		while (list.length) {
+			var line = list.shift();
+			if (line != "") {
+				// Forwardコマンドに限り、数ピクセル刻みで分割
+				if(line.toLowerCase().indexOf("forward") != -1) {
+				 	var nums = line.trim().split(" ")[1];
+				 	for(var i = 0; i < nums; i++) {
+						this.push("Forward 1");
+					}
+				} else {
+					this.push(line);
+				}
+			}
+		}
+		this.first();
+	};
+	
+	// public
+	proto.first = function() {
+		this.current = -1;
+	};
+	
+	proto.next = function() {
 		if (this.length <= 0) return null;
-        if (this.current >= this.length-1) {
+		if (this.current >= this.length-1) {
 			this.current = this.length-1;
 			return null;
-        }
-        return this._parseToken(++this.current);
-    };
+		}
+		return this._parseToken(++this.current);
+	};
 	
 
 	// private
-    proto._parseToken = function(lineNum) {
+	proto._parseToken = function(lineNum) {
 		var raw = this[lineNum].split(" ");
-        var token = [];
+		var token = [];
 
-        while (raw.length) {
-            var args = raw.shift();
-            if (args != "") token.push(args);
-        }
-        return token;
-    };
+		while (raw.length) {
+			var args = raw.shift();
+			if (args != "") token.push(args);
+		}
+		return token;
+	};
 
-    // aspect
-    /*
+	// aspect
+	/*
 	var _aspect = function() {
 		if (this.length <= 0) throw new Error("oops! there's no codes!");
-        if (this.length <= this.current) {
+		if (this.length <= this.current) {
 			this.current = this.length-1;
 			return null;
-        }
+		}
 	};
 	var _methods = ["next"];
 	while(_methods.length) (function(name) {
@@ -199,9 +198,9 @@ TokenArray.prototype = (function() {
 			f.apply(this, arguments);
 		};
 	})(_methods.shift());
-    */
-    
-    return proto;
+	*/
+	
+	return proto;
 })();
 
 
@@ -263,18 +262,19 @@ Interpreter.prototype = (function() {
 		
 		// interprete
 		(function() {
-			var token = that._tokenList.next();
-			if (!token) return;
+			var token, key;
 			
-			var key = token.shift();
-			that.dispatch(key, token);
-			
-			if(that.interval == 0)
-			{
-				arguments.callee();
-			}else{
-				setTimeout(arguments.callee, that.interval);
-			}
+			do {
+				token = that._tokenList.next();
+				if (!token) return;
+				
+				key = token.shift();
+				that.dispatch(key, token);
+				
+				if (0 < that.interval) {
+					return setTimeout(arguments.callee, that.interval);
+				}
+			} while(true);
 		})();
 	};
 	
@@ -299,7 +299,7 @@ function Turtle(element) {
 
 	this._varStore = {};
 
-    	
+		
 	// constructor
 	if (!element) throw new Error("element:Element not specified.");
 	
