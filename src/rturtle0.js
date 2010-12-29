@@ -45,7 +45,7 @@ function init() {
 	};
 	imagenizeButton.onclick = function() {
 		try {
-			var url = canvas.toDataURL("image/png");
+			var url = turtle.getImageURL();
 			window.open(url, null);
 		} catch (e) {
 			alert("このブラウザでは画像のエクスポートができません。");
@@ -417,6 +417,10 @@ Turtle.prototype = (function() {
 			width: Number(this.canvas.getAttribute("width")),
 			height: Number(this.canvas.getAttribute("height")),
 		};
+	};
+
+	proto.getImageURL = function(type) {
+		return this.ctx.toDataURL(type ? type : "image/png");
 	};
 
 	// private
