@@ -321,7 +321,7 @@ function Turtle(element) {
 	// constructor
 	if (!element) throw new Error("element:Element not specified.");
 	
-	var ctx = this.context;
+	var ctx = element.getContext("2d");
 	var that = this;
 
 	this.on("repeat", function(num) {
