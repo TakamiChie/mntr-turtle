@@ -337,6 +337,8 @@ function Turtle(element) {
 	
 	this.on("forward", function(duration) {
 		
+		duration = Number(duration);
+
 		// あまりに描画が遅いので高速化
 		if (that.duration < that.skipRadius) {
 			that.duration += duration;
@@ -361,8 +363,12 @@ function Turtle(element) {
 	});
 
 	this.on("moveto", function(x, y) {
+		x = Number(x), y = Number(y);
+
 		that.x = x;
 		that.y = y;
+		ctx.moveTo(x, y);
+		that.dispatch("point", [x, y]);
 	});
 
 	this.on("center", function() {
@@ -371,11 +377,11 @@ function Turtle(element) {
 	});
 
 	this.on("turn", function(degree) {
-		that.degree = that.degree + degree % 360;
+		that.degree = that.degree + Number(degree) % 360;
 	});
 
 	this.on("setsize", function(width, height) {
-		that.setCanvasSize({width: width, height: height});
+		that.setCanvasSize({width: Number(width), height: Number(height)});
 	});
 
 	this.on("clear", function() {
