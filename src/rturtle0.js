@@ -368,7 +368,6 @@ function Turtle(element) {
 		that.x = x;
 		that.y = y;
 		ctx.moveTo(x, y);
-		that.dispatch("point", [x, y]);
 	});
 
 	this.on("center", function() {
