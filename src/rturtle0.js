@@ -45,7 +45,7 @@ function init() {
 	};
 	imagenizeButton.onclick = function() {
 		try {
-			var url = turtle.getImageURL();
+			var url = canvas.firstChild.toDataURL();
 			window.open(url, null);
 		} catch (e) {
 			alert("このブラウザでは画像のエクスポートができません。");
@@ -321,7 +321,7 @@ function Turtle(element) {
 	// constructor
 	if (!element) throw new Error("element:Element not specified.");
 	
-	var ctx = element.getContext("2d");
+	var ctx = this.context;
 	var that = this;
 
 	this.on("repeat", function(num) {
@@ -423,10 +423,6 @@ Turtle.prototype = (function() {
 			width: Number(this.canvas.getAttribute("width")),
 			height: Number(this.canvas.getAttribute("height")),
 		};
-	};
-
-	proto.getImageURL = function(type) {
-		return this.ctx.toDataURL(type ? type : "image/png");
 	};
 
 	// private
