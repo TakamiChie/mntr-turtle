@@ -1,12 +1,20 @@
 body, textarea {
 	font-family: "Lucida Console", "Courier New", monospace;
-	font-size: 14px;
+	font-size: 13px;
+	line-height: 1em;
 }
+
+#sidebar {
+	width: 30em;
+	margin-right: 5em;
+	float:left;
+}
+
 #canvas {
 	position: relative;
 	margin: 0 1em;
 }
-#canvas canvas{
+#canvas canvas {
 	border: 1px solid gray;
 }
 #canvas .pointer {
@@ -16,24 +24,23 @@ body, textarea {
 	background-color: #ff6600;
 }
 
+#comref{
+	width: 20em;
+}
 #comref th {
 	text-align: right;
 }
 #comref td {
 	letter-spacing: 1px;
 }
-#console{
-	width: 40em;
-	float: left;
-}
 
-#comref{
-	width: 20em;
-	float: left;
-}
+#console{}
 
 #canvasarea{
-	clear: both;
-	width: 100%;
+	margin-left: 34em;
 }
 
+#footer {
+	text-align: center;
+	clear: both;
+}

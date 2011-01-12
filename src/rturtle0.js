@@ -3,126 +3,18 @@
 //
 //
 
-function println(str) {
-	console.log(str)
-}
-function init() {
-	var canvas = document.getElementById("canvas");
-	var console = document.getElementById("console");
-	var pointer = canvas.lastChild;
-	var source = console.source;
-	var intervalNum = console.interval;
-	var startButton = console.start;
-	var imagenizeButton = console.imagenize;
-	var samples = console.samples;
-	
-	var _ = "  ";
-	var turtle = new Turtle(canvas.firstChild);
-
-	startButton.disabled = false;
-	
-	turtle.on("start", function() {
-		startButton.disabled = true;
-		startButton.value = "描画中...";
-	});
-	
-	turtle.on("end", function() {
-		startButton.disabled = false;
-		startButton.value = "実行";
-	});
-
-	turtle.on("point", function(x,y) {
-		pointer.style.left = (x-1) + "px";
-		pointer.style.top = (y-1) + "px";
-	});
-
-	intervalNum.onchange = function() {
-		turtle.skipRadius = Math.pow(10e3, Number(this.value));
+/**
+ * String trim method (for IE)
+ */
+if (!String.prototype.trim) {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+/,"").replace(/\s+$/, ""); 
 	};
-	startButton.onclick = function() {
-		turtle.skipRadius = Math.pow(10e3, Number(intervalNum.value));
-		turtle.run(source.value);
-	};
-	imagenizeButton.onclick = function() {
-		try {
-			var url = canvas.firstChild.toDataURL();
-			window.open(url, null);
-		} catch (e) {
-			alert("このブラウザでは画像のエクスポートができません。");
-		}
-	};	
-
-
-	// tab inserter
-	var insertTab = function(e) {
-		if (e.keyCode == 9) {
-			var startPos = source.selectionStart;
-			var endPos = source.selectionEnd;
-			var before = source.value.slice(0, startPos);
-			var after = source.value.slice(endPos);
-
-			source.value = before + _ + after;
-			source.setSelectionRange(endPos+_.length, endPos+_.length);
-			return false;
-		}
-	};
-	source.onblur = function() {
-		window.onkeydown = function() {};
-	};
-	source.onfocus = function() {
-		setTimeout(function() {
-			window.onkeydown = insertTab;
-		}, 300);
-	};
-
-	// sample draws
-	var draws = {
-		"四角":
-			"Center\n"+
-			"Repeat 4 [\n"+
-			_+"Forward 100\n"+
-			_+"Turn 90\n"+
-			"]",
-		"星":
-			"Center\n"+
-			"Turn 90\n"+
-			"Repeat 5 [\n"+
-			_+"Forward 100\n"+
-			_+"Turn 144\n"+
-			"]",
-		"円":
-			"Center\n"+
-			"Turn 60\n"+
-			_+"Repeat 360 [\n"+
-			_+"Forward 1\n"+
-			_+"Turn 1\n"+
-			"]",
-		"花":
-			"Center\n"+
-			"Repeat 6 [\n"+
-			_+"Turn 60\n"+
-			_+"Repeat 360 [\n"+
-			_+_+"Forward 1\n"+
-			_+_+"Turn 1\n"+
-			_+"]\n"+
-			"]",
-	};
-	
-	for (var name in draws) {
-		var opt = document.createElement("option");
-		opt.setAttribute("value", draws[name]);
-		opt.innerHTML = name;
-		samples.appendChild(opt);
-	}
-	samples.onchange = function() {
-		var index = samples.selectedIndex;
-		if (index <= 0) return false;
-		
-		source.value = samples.options[index].getAttribute("value");
-	}
-
 }
 
+/**
+ * Vector calculation methods
+ */
 var Vector2D = {
 	degreeToRadian: function (deg) {
 		return (deg/360)*2*Math.PI;
@@ -135,7 +27,6 @@ var Vector2D = {
 		};
 	}
 };
-
 
 function TokenArray() {
 	// inherit
@@ -156,7 +47,7 @@ TokenArray.prototype = (function() {
 		while (list.length) {
 			var line = list.shift();
 			if (line != "") {
-				// Forwardコマンドに限り、数ピクセル刻みで分割
+			// Forwardコマンドに限り、数ピクセル刻みで分割
 				if(line.toLowerCase().indexOf("forward") != -1) {
 				 	var nums = line.trim().split(" ")[1];
 				 	for(var i = 0; i < nums; i++) {
@@ -225,7 +116,7 @@ TokenArray.prototype = (function() {
  */
 function Interpreter() {
 	// properties
-	this.interval = 100;
+	this.interval = 0;
 	
 	this._tokenList = [];
 	this._map = {};
@@ -257,7 +148,7 @@ Interpreter.prototype = (function() {
 		
 		if (this._map[key.toLowerCase()]) {
 			//setTimeout(function() {
-				that._map[key.toLowerCase()].apply(that, args)
+				that._map[key.toLowerCase()].apply(that, args || [])
 			//}, 0);
 		}
 	};
@@ -307,7 +198,6 @@ function Turtle(element) {
 	
 	// properties
 	this.canvas = element;
-	this.interval = 0;
 	
 	this.x = 0;
 	this.y = 0;
@@ -317,14 +207,17 @@ function Turtle(element) {
 	this._duration = 0;
 	this._varStore = {};
 
-		
+	
 	// constructor
+	
+	
 	if (!element) throw new Error("element:Element not specified.");
 	
 	var ctx = element.getContext("2d");
+	var interval = 50;
 	var that = this;
 
-	this.on("repeat", function(num) {
+	that.on("repeat", function(num) {
 		var count = this.count();
 		var handler = this.off("]");
 		
@@ -335,16 +228,16 @@ function Turtle(element) {
 		
 	});
 	
-	this.on("forward", function(duration) {
+	that.on("forward", function(duration) {
 		
 		duration = Number(duration);
-
+		
 		// あまりに描画が遅いので高速化
 		if (that.duration < that.skipRadius) {
 			that.duration += duration;
 			that.interval = 0;
 		} else {
-			that.interval = 1;
+			that.interval = interval;
 			that.duration = 0;
 		}
 		
@@ -362,7 +255,7 @@ function Turtle(element) {
 		that.dispatch("point", [rx, ry]);
 	});
 
-	this.on("moveto", function(x, y) {
+	that.on("moveto", function(x, y) {
 		x = Number(x), y = Number(y);
 
 		that.x = x;
@@ -370,25 +263,25 @@ function Turtle(element) {
 		ctx.moveTo(x, y);
 	});
 
-	this.on("center", function() {
+	that.on("center", function() {
 		var dim = that.getCanvasSize();
 		that.dispatch("moveTo", [parseInt(dim.width/2), parseInt(dim.height/2)]);
 	});
 
-	this.on("turn", function(degree) {
+	that.on("turn", function(degree) {
 		that.degree = that.degree + Number(degree) % 360;
 	});
 
-	this.on("setsize", function(width, height) {
+	that.on("setsize", function(width, height) {
 		that.setCanvasSize({width: Number(width), height: Number(height)});
 	});
 
-	this.on("clear", function() {
+	that.on("clear", function() {
 		var dim = that.getCanvasSize();
 		ctx.clearRect(0, 0, dim.width, dim.height);
 	});
 	
-	this.on("end", function() {
+	that.on("end", function() {
 		that.end();
 	});
 }
@@ -428,5 +321,3 @@ Turtle.prototype = (function() {
 	
 	return proto;
 })();
-
-window.onload = init;
