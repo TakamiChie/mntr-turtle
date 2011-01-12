@@ -1,7 +1,13 @@
 ものづくり寺子屋ワークショップ用開発環境
 The turtle interpreter
 
+v0.1
 MIT License
+
+JavaScriptを用いたLogo言語のインタープリタです。
+プログラミング教材の基礎部分として開発されています。
+
+http://mntr.cosmio.net/
 
 --------------------------------------------------
 copyright (c) 2010 ものづくり寺子屋 
