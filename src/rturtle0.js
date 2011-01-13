@@ -118,6 +118,7 @@ function Interpreter() {
 	// properties
 	this.interval = 0;
 	
+	this._isHanged = true;
 	this._tokenList = [];
 	this._map = {};
 }
@@ -126,11 +127,16 @@ Interpreter.prototype = (function() {
 
 	// public
 	proto.run = function(code) {
+		this._isHanged = false;
 		this._interprete(code);
 	};
 
 	proto.end = function() {
 		this._tokenList.length = 0;
+	};
+
+	proto.interrupt = function() {
+		this._isHanged = true;
 	};
 
 	proto.on = function(key, callback) {
@@ -173,11 +179,11 @@ Interpreter.prototype = (function() {
 			
 			do {
 				token = that._tokenList.next();
-				if (!token) return that.dispatch("end");
+				if (!token || that._isHanged) return that.dispatch("end");
 				
 				key = token.shift();
 				that.dispatch(key, token);
-				
+
 				if (0 < that.interval) {
 					return setTimeout(arguments.callee, that.interval);
 				}
