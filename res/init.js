@@ -14,16 +14,24 @@ function init() {
 	var _ = "  ";
 	var turtle = new Turtle(canvas.firstChild);
 	
-	startButton.disabled = false;
+	var clickHandler;
 	
 	turtle.on("start", function() {
-		startButton.disabled = true;
-		startButton.value = "描画中...";
+		startButton.value = "実行中(クリックで中断)";
+		
+		// めんどくさいからクロージャで実装。
+		// 誰かてきとーになおして
+		clickHandler = startButton.onclick;
+		startButton.onclick = function() {
+			turtle.interrupt();
+		};
 	});
 	
 	turtle.on("end", function() {
-		startButton.disabled = false;
 		startButton.value = "実行";
+
+		if (clickHandler) 
+			startButton.onclick = clickHandler;
 	});
 
 	turtle.on("point", function(x,y) {
@@ -38,6 +46,7 @@ function init() {
 		intervalNum.onchange();
 		turtle.run(source.value);
 	};
+
 	imagenizeButton.onclick = function() {
 		try {
 			var url = canvas.firstChild.toDataURL();
