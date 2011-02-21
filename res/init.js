@@ -52,7 +52,7 @@ function init() {
 			turtle.run(source.value);
 		} else {
 			alert('error!');
-			if (check[0].message !== 'success') {
+			if (checked[0].message !== 'success') {
 				printError(check);
 			}
 			if(depth !== 0){
