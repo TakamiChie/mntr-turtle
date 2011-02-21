@@ -40,11 +40,14 @@ function TokenArray() {
 }
 TokenArray.prototype = (function() {
 	var proto = new Array;
+	var that = this;
 
 	// constructor
 	proto.initialize = function(code) {
 		var list = code.split(/\r?\n\r?/);
+		that.nowline = 0;
 		while (list.length) {
+			that.nowline++;
 			var line = list.shift();
 			if (line != "") {
 			// Forwardコマンドに限り、数ピクセル刻みで分割
@@ -74,7 +77,10 @@ TokenArray.prototype = (function() {
 		}
 		return this._parseToken(++this.current);
 	};
-	
+
+	proto.nowline = function() {
+		return that.nowline;
+	};
 
 	// private
 	proto._parseToken = function(lineNum) {
@@ -156,6 +162,8 @@ Interpreter.prototype = (function() {
 			//setTimeout(function() {
 				that._map[key.toLowerCase()].apply(that, args || [])
 			//}, 0);
+		}else{
+			console.log("error! line:" + TokenArray.prototype.nowline());
 		}
 	};
 	
@@ -179,8 +187,10 @@ Interpreter.prototype = (function() {
 			
 			do {
 				token = that._tokenList.next();
-				if (!token || that._isHanged) return that.dispatch("end");
-				
+				if (!token || that._isHanged) {
+					console.log("code end.");
+					return that.dispatch("end");
+				}
 				key = token.shift();
 				that.dispatch(key, token);
 
@@ -224,11 +234,15 @@ function Turtle(element) {
 	var that = this;
 
 	that.on("repeat", function(num) {
+		console.log("repeat start")
 		var count = this.count();
 		var handler = this.off("]");
 		
 		that.on("]", function() {
-			if (--num <= 0) return that.on("]", handler);
+			if (--num <= 0) {
+				console.log("repeat end");
+				return that.on("]", handler);
+			}
 			that.move(count);
 		});
 		
@@ -275,24 +289,29 @@ function Turtle(element) {
 		that.x += x;
 		that.y += y;
 		ctx.moveTo(x, y);
+		console.log("moved:" + that.x + ", " + that.y);
 	});
 
 	that.on("center", function() {
 		var dim = that.getCanvasSize();
 		that.dispatch("moveTo", [parseInt(dim.width/2), parseInt(dim.height/2)]);
+		console.log("moved center");
 	});
 
 	that.on("turn", function(degree) {
 		that.degree = that.degree + Number(degree) % 360;
+		console.log("turned " + that.degree);
 	});
 
 	that.on("setsize", function(width, height) {
 		that.setCanvasSize({width: Number(width), height: Number(height)});
+		console.log("set size" + wigth + ", " + height);
 	});
 
 	that.on("clear", function() {
 		var dim = that.getCanvasSize();
 		ctx.clearRect(0, 0, dim.width, dim.height);
+		console.log("clear.");
 	});
 	
 	that.on("end", function() {
@@ -305,6 +324,7 @@ Turtle.prototype = (function() {
 	// public
 	var _proto_run = proto.run;
 	proto.run = function(code) {
+		console.log("code start.");
 		this.clear();
 		this.degree = 0;
 		this.dispatch("start");
