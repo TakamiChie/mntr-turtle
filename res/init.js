@@ -44,7 +44,6 @@ function init() {
 	};
 	startButton.onclick = function() {
 		// 最高に汚いので整理したい
-		// コードをここで事前にバリデーション
 		var checked = validCode(source.value);
 		var depth = returnDepth(source.value);
 		if (checked[0].message === 'success' && depth === 0) {
