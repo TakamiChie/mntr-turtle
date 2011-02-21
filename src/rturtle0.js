@@ -269,6 +269,14 @@ function Turtle(element) {
 		ctx.moveTo(x, y);
 	});
 
+	that.on("move", function(x, y) {
+		x = Number(x), y = Number(y);
+
+		that.x += x;
+		that.y += y;
+		ctx.moveTo(x, y);
+	});
+
 	that.on("center", function() {
 		var dim = that.getCanvasSize();
 		that.dispatch("moveTo", [parseInt(dim.width/2), parseInt(dim.height/2)]);
