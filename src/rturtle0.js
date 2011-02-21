@@ -56,6 +56,15 @@ TokenArray.prototype = (function() {
 				 	for(var i = 0; i < nums; i++) {
 						this.push("Forward 1");
 					}
+				} else if(line.toLowerCase().indexOf("repeat") != -1){
+					// Comming repeat command, check syntax error
+					var point = line.toLowerCase().indexOf("[");
+					if(line.toLowerCase().indexOf(" ", point - 1) == -1 ||
+						line.toLowerCase().indexOf(" ", 7) == -1){
+						console.log("error! line:" + that.nowline);
+						this.push("end");
+					}
+					this.push(line);
 				} else {
 					this.push(line);
 				}
