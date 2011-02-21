@@ -47,7 +47,6 @@ TokenArray.prototype = (function() {
 		var list = code.split(/\r?\n\r?/);
 		that.nowline = 0;
 		while (list.length) {
-			that.nowline++;
 			var line = list.shift();
 			if (line != "") {
 			// Forwardコマンドに限り、数ピクセル刻みで分割
@@ -56,15 +55,6 @@ TokenArray.prototype = (function() {
 				 	for(var i = 0; i < nums; i++) {
 						this.push("Forward 1");
 					}
-				} else if(line.toLowerCase().indexOf("repeat") != -1){
-					// Comming repeat command, check syntax error
-					var point = line.toLowerCase().indexOf("[");
-					if(line.toLowerCase().indexOf(" ", point - 1) == -1 ||
-						line.toLowerCase().indexOf(" ", 7) == -1){
-						console.log("error! line:" + that.nowline);
-						this.push("end");
-					}
-					this.push(line);
 				} else {
 					this.push(line);
 				}
@@ -85,10 +75,6 @@ TokenArray.prototype = (function() {
 			return null;
 		}
 		return this._parseToken(++this.current);
-	};
-
-	proto.nowline = function() {
-		return that.nowline;
 	};
 
 	// private
@@ -171,8 +157,6 @@ Interpreter.prototype = (function() {
 			//setTimeout(function() {
 				that._map[key.toLowerCase()].apply(that, args || [])
 			//}, 0);
-		}else{
-			console.log("error! line:" + TokenArray.prototype.nowline());
 		}
 	};
 	
