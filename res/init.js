@@ -44,7 +44,6 @@ function init() {
 	};
 	startButton.onclick = function() {
 		// 最高に汚いので整理したい
-		// コードをここで事前にバリデーション
 		var checked = validCode(source.value);
 		var depth = returnDepth(source.value);
 		if (checked[0].message === 'success' && depth === 0) {
@@ -53,7 +52,7 @@ function init() {
 		} else {
 			alert('error!');
 			if (checked[0].message !== 'success') {
-				printError(check);
+				printError(checked);
 			}
 			if(depth !== 0){
 				println('Brackets not closed.');
