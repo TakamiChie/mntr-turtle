@@ -13,6 +13,7 @@ function init() {
 	
 	var _ = "  ";
 	var turtle = new Turtle(canvas.firstChild);
+	var validator = new Validator();
 	
 	var clickHandler;
 	
@@ -42,21 +43,25 @@ function init() {
 	intervalNum.onchange = function() {
 		turtle.skipRadius = Number(this.value);
 	};
+	
 	startButton.onclick = function() {
-		// 最高に汚いので整理したい
-		var checked = validCode(source.value);
-		var depth = returnDepth(source.value);
-		if (checked[0].message === 'success' && depth === 0) {
+		var errors = validator.check(source.value);
+		if (errors.length === 0) {
 			intervalNum.onchange();
 			turtle.run(source.value);
 		} else {
-			alert('error!');
-			if (checked[0].message !== 'success') {
-				printError(checked);
+			alert('Errors have occurred.');
+			println('---');
+			println(String(errors.length) + ' ERRORS FOUND.');
+			for(var i = 0; i < errors.length; i++){
+				var error = errors[i];
+				if(error.code === 500){
+					println(error.message + ': ' + error.source);
+				} else if (error.code === 503) {
+					println(error.message);
+				}
 			}
-			if(depth !== 0){
-				println('Brackets not closed.');
-			}
+			println('---');
 		}
 	};
 
@@ -116,52 +121,6 @@ function init() {
 
 	shrinker("comref", true);
 }
-
-// LOGO Validator
-
-function validCode(code) {
-	var list = code.split(/\r?\n\r?/);
-	var reg = /^(setsize)$|^(moveto\s[0-9]+\s[0-9]+)$|^(move\s[0-9]+\s[0-9]+)$|^(center)$|^(forward\s[0-9]+)$|^(Turn\s[0-9]+)$|^(repeat\s[0-9]+\s\[)$|^(\])$/i;
-	var errors = [];
-	
-	for(var i = 0; i < list.length; i++){
-		var line = list[i];
-		line = line.replace(/^\s+|\s+$/g, "");
-		line = line.replace(reg, '');
-		if (line !== '') {
-			errors.push({
-				line: i + 1,
-				message: 'syntax error at line ' + String(i+1),
-				source: line
-			});
-		}
-	}
-	if (errors.length === 0) {
-		errors[0] = {message: 'success'};
-	}
-	return errors;
-};
-
-function returnDepth(code) {
-	var list = code.split(/\r?\n\r?/);
-	var depth = 0;
-	for(var i = 0; i < list.length; i++){
-		var line = list[i].replace(/^\s+|\s+$/g, "");
-		if(line.slice(-1) === '['){
-			depth++;
-		}else if(line.slice(0,1) === ']'){
-			depth--;
-		}
-		if(depth < 0) depth = 0;
-	}
-	return depth;
-};
-
-function printError(errors) {
-	for (var i = 0; i < errors.length; i++) {
-		println(errors[i].message + ': \'' + errors[i].source + '\'.');
-	}
-};
 
 function shrinker(targetID, hidden) {
 	var trigger = document.getElementById(targetID+"_shrink");

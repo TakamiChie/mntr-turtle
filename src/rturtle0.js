@@ -8,9 +8,67 @@
  */
 if (!String.prototype.trim) {
 	String.prototype.trim = function() {
-		return this.replace(/^\s+/,"").replace(/\s+$/, ""); 
+		return this.replace(/^\s+|\s+$/g, "");
 	};
 }
+
+/**
+ * Code Validator
+ */
+function Validator() {
+	// properties
+	this.reg = /^(setsize)$|^(moveto\s[0-9]+\s[0-9]+)$|^(move\s[0-9]+\s[0-9]+)$|^(center)$|^(forward\s[0-9]+)$|^(Turn\s[0-9]+)$|^(repeat\s[0-9]+\s\[)$|^(\])$/i;
+}
+Validator.prototype = (function() {
+	var proto = {};
+	
+	// public
+	proto.check = function(code) {
+		var list = code.split(/\r?\n\r?/);
+		var errors = [];
+		var depth = 0;
+		
+		for(var i = 0; i <　list.length; i++) {
+			var line = list[i].trim();
+			this._validateCode(line, i, errors);
+			depth += this._countDepth(line);
+			if(depth < 0) depth = 0;
+		}
+		if (depth !== 0) {
+			errors.push({
+				code: 503,
+				message: 'Brackets not closed',
+				source: 'none'
+			});
+		}
+		return errors;
+	};
+	
+	// private
+	proto._validateCode = function(line, i, errors) {
+		line = line.replace(this.reg, '');
+		if (line !== '') {
+			errors.push({
+				code: 500,
+				line: i + 1,
+				message: 'Syntax error at line ' + String(i+1),
+				source: line
+			});
+		}
+	};
+	
+	proto._countDepth = function(line) {
+		var depth = 0;
+		if (line.slice(-1) === '[') {
+			depth = 1;
+		} else if (line.slice(0,1) === ']') {
+			depth = -1;
+		}
+		return depth;
+	};
+	
+	return proto;
+})();
 
 /**
  * Vector calculation methods
