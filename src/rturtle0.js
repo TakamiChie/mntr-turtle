@@ -13,6 +13,16 @@ if (!String.prototype.trim) {
 }
 
 /**
+ * ALERT: REMOVE ALL "console.log"
+ */
+if (!console && !console.log) {
+	window.console = console || {};
+	console.log = function(alert) {
+		// TODO: output errors for "non-developer's browser";
+	};
+}
+
+/**
  * Code Validator
  */
 function Validator() {
